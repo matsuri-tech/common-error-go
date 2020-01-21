@@ -1,6 +1,8 @@
 package merrors
 
-import "regexp"
+import (
+	"regexp"
+)
 
 const (
 	ErrorDB             ErrorType = "db_error"

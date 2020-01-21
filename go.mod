@@ -1,3 +1,3 @@
-module github.com/matsuri-tech/merrors
+module github.com/matsuri-tech/common-error
 
 go 1.13
