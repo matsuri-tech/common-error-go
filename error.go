@@ -66,7 +66,7 @@ func ErrorInternalServerError(msg string, errType ErrorType) CommonError {
 }
 
 func (e CommonError) Error() string {
-	return e.Msg
+	return string(e.ErrorType) + ": " + e.Msg
 }
 
 // 内部向けのスタックトレースとかを表示する
