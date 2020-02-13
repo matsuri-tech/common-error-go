@@ -2,6 +2,7 @@ package merrors
 
 import (
 	"net/http"
+	"reflect"
 	"runtime"
 	"strconv"
 )
@@ -76,4 +77,30 @@ func (e CommonError) InternalErrorJson() map[string]interface{} {
 	json["msg"] = e.Msg
 	json["stackTrace"] = e.StackTrace
 	return json
+}
+
+// 以下の条件のいずれかを満たす場合にはtrue、それ以外の場合にはfalseを返す
+// - x, y がDeepEqualである
+// - x, y がいずれもCommonErrorであり、かつErrorTypeが同一
+// 異常系のテスト時に、期待したErrorTypeが返っているか確認するために使用することを想定
+func ErrorTypeEqual(x error, y error) bool {
+	if reflect.DeepEqual(x, y) {
+		return true
+	}
+
+	cErrX, ok := x.(CommonError)
+	if !ok {
+		return false
+	}
+
+	cErrY, ok := y.(CommonError)
+	if !ok {
+		return false
+	}
+
+	if cErrX.ErrorType == cErrY.ErrorType {
+		return true
+	}
+
+	return false
 }
