@@ -1,6 +1,7 @@
 package merrors
 
 import (
+	"encoding/json"
 	"net/http"
 	"reflect"
 	"runtime"
@@ -21,6 +22,40 @@ type CommonError struct {
 type ErrorResponse struct {
 	Error     string
 	ErrorType ErrorType
+}
+
+type ErrorResponseCamelCase struct {
+	Error     string
+	ErrorType ErrorType `json:"errorType"`
+}
+
+type ErrorResponseSnakeCase struct {
+	Error     string
+	ErrorType ErrorType `json:"error_type"`
+}
+
+// UnmarshalJSON で上書き
+// Go以外の言語についてはKey名がsnake_caseになるものがあるので、そのAPIのレスポンスのハンドリングで困ることがあるから。
+func (r *ErrorResponse) UnmarshalJSON(data []byte) error {
+	var c ErrorResponseCamelCase
+	if err := json.Unmarshal(data, &c); err != nil {
+		return err
+	}
+
+	if c.ErrorType != "" {
+		r.Error = c.Error
+		r.ErrorType = c.ErrorType
+		return nil
+	}
+
+	var s ErrorResponseSnakeCase
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+
+	r.Error = s.Error
+	r.ErrorType = s.ErrorType
+	return nil
 }
 
 func ErrorByStatusCode(statusCode int, msg string, errorType ErrorType) CommonError {
