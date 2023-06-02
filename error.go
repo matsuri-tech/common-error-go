@@ -24,12 +24,12 @@ type ErrorResponse struct {
 	ErrorType ErrorType
 }
 
-type ErrorResponseCamelCase struct {
+type errorResponseCamelCase struct {
 	Error     string
 	ErrorType ErrorType `json:"errorType"`
 }
 
-type ErrorResponseSnakeCase struct {
+type errorResponseSnakeCase struct {
 	Error     string
 	ErrorType ErrorType `json:"error_type"`
 }
@@ -37,7 +37,7 @@ type ErrorResponseSnakeCase struct {
 // UnmarshalJSON で上書き
 // Go以外の言語についてはKey名がsnake_caseになるものがあるので、そのAPIのレスポンスのハンドリングで困ることがあるから。
 func (r *ErrorResponse) UnmarshalJSON(data []byte) error {
-	var c ErrorResponseCamelCase
+	var c errorResponseCamelCase
 	if err := json.Unmarshal(data, &c); err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func (r *ErrorResponse) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	var s ErrorResponseSnakeCase
+	var s errorResponseSnakeCase
 	if err := json.Unmarshal(data, &s); err != nil {
 		return err
 	}
