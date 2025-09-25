@@ -1,17 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "timezone": "Asia/Tokyo",
-  "extends": ["config:recommended"],
+  "extends": ["config:recommended", ":configMigration"],
   "reviewers": ["hrdtbs"],
   "prConcurrentLimit": 2,
   "major": {
     "stabilityDays": 7
   },
   "minor": {
-    "stabilityDays": 3
+    "stabilityDays": 7
   },
   "patch": {
-    "stabilityDays": 1,
+    "stabilityDays": 7,
     "automerge": true
   },
   "separateMinorPatch": true,
