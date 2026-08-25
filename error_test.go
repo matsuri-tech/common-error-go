@@ -3,9 +3,39 @@ package merrors
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
 	"reflect"
 	"testing"
 )
+
+func TestErrorForbidden(t *testing.T) {
+	err := ErrorForbidden("forbidden", "some_error_type")
+	if err.StatusCode != http.StatusForbidden {
+		t.Errorf("got %v, want %v", err.StatusCode, http.StatusForbidden)
+	}
+	if err.ErrorType != "some_error_type" {
+		t.Errorf("got %v, want %v", err.ErrorType, "some_error_type")
+	}
+}
+
+func TestErrorByStatusCode(t *testing.T) {
+	tests := []struct {
+		statusCode int
+		want       int
+	}{
+		{statusCode: http.StatusNotFound, want: http.StatusNotFound},
+		{statusCode: http.StatusBadRequest, want: http.StatusBadRequest},
+		{statusCode: http.StatusUnauthorized, want: http.StatusUnauthorized},
+		{statusCode: http.StatusForbidden, want: http.StatusForbidden},
+		{statusCode: http.StatusTeapot, want: http.StatusInternalServerError},
+	}
+
+	for _, tt := range tests {
+		if got := ErrorByStatusCode(tt.statusCode, "msg", "type"); got.StatusCode != tt.want {
+			t.Errorf("statusCode %v: got %v, want %v", tt.statusCode, got.StatusCode, tt.want)
+		}
+	}
+}
 
 func TestErrorTypeEqual(t *testing.T) {
 	tests := []struct {
