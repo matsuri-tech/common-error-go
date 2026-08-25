@@ -66,6 +66,8 @@ func ErrorByStatusCode(statusCode int, msg string, errorType ErrorType) CommonEr
 		return ErrorBadRequest(msg, errorType)
 	case http.StatusUnauthorized:
 		return ErrorUnauthorized(msg, errorType)
+	case http.StatusForbidden:
+		return ErrorForbidden(msg, errorType)
 	default:
 		return ErrorInternalServerError("internal server error", errorType)
 	}
@@ -95,6 +97,10 @@ func ErrorUnauthorized(msg string, errType ErrorType) CommonError {
 
 func ErrorBadRequest(msg string, errType ErrorType) CommonError {
 	return NewCommonError(http.StatusBadRequest, msg, errType)
+}
+
+func ErrorForbidden(msg string, errType ErrorType) CommonError {
+	return NewCommonError(http.StatusForbidden, msg, errType)
 }
 
 func ErrorInternalServerError(msg string, errType ErrorType) CommonError {
